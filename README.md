@@ -3,7 +3,7 @@
 Customer Service is a core service for a lot of businesses around the world and it is getting greatly enhanced by Natural Language Processing-powered applications nowadays. This project implements a serverless, microservice-driven web application, specifically, a Dining Concierge Chatbot that sends the user some restaurant suggestions given a set of preference that the user provided through conversation with the chatbot.
 
 ## Workflow
-A workflow demo video for this project: https://www.youtube.com/watch?v=nADHtbxYYXw&t=361s
+A workflow demo video for this project: https://www.youtube.com/watch?v=nADHtbxYYXw
 
 Every time the user accesses the chatbot web application, she would be asked to log in first and led to the sign-in/sign-up UI page hosted by AWS Cognito. After successfully logged-in or registered (and underneather token validation), then could she start the interction with the chatbot. Based on the conversation with the user, Lex chatbot will identify the user's preference (including cuisine type, location, date, time, phone number) and store it as an SQS queue message. Then, the Lambda fcuntion searches through Elasticsearch to get random suggestions of restaurantIDs with the given cuisine type and location. Meanwhile, the Lambda function would also fetch the restaurants' detailed info from the DynamoDB table (e.g., restaurant name, address, rating and price) for the given restaurantIDs. Finally, a restaurant-suggestion message will be sent back to the user's mobile via SMS.
 
