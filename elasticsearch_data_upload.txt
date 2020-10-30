@@ -1,0 +1,3 @@
+curl -XPUT -u COMS6998-root:PASSWORD https://search-chatbot-ruwuv46kgrvz2rmjihr3zxem3i.us-east-1.es.amazonaws.com/_bulk --data-binary @restaurant_info_clean.json -H 'Content-Type: application/json'
+
+Kibana: Security -> Role Mappings -> all_access -> Add User arn:aws:iam::336385704730:user/COMS6998-root 
