@@ -47,7 +47,7 @@ Every time the user accesses the chatbot web application, she would be asked to 
    2. DiningSuggestionsIntent: Collect the following user preference/slots through the conversation: Location, Cuisine, NumberofPeople, DiningDate, DiningTime, PhoneNumber.
    3. ThankYouIntent: Lead the user to end the conversation.
 4. Create the Lambda function (LF Validation) for the slot value validation (Location and PhoneNumber).
-5. Based on the parameters collected from the user, push the information collected from the user (location, cuisine, etc.) to an SQS queue (Q1).
+5. Based on the parameters collected from the user, push the information collected from the user (location, cuisine, etc.) to an SQS queue (~~Q1~~Preference).
 
 ### Integrate the Lex chatbot into the chat API
 - Use the AWS SDK to call the Lex chatbot from the API Lambda (LF0).
