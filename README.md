@@ -47,7 +47,7 @@ Every time the user accesses the chatbot web application, she would be asked to 
    2. DiningSuggestionsIntent: Collect the following user preference/slots through the conversation: Location, Cuisine, NumberofPeople, DiningDate, DiningTime, PhoneNumber.
    3. ThankYouIntent: Lead the user to end the conversation.
 4. Create the Lambda function (LF Validation) for the slot value validation (Location and PhoneNumber).
-5. Based on the parameters collected from the user, push the information collected from the user (location, cuisine, etc.) to an SQS queue (~~Q1~~Preference).
+5. Based on the parameters collected from the user, push the information collected from the user (location, cuisine, etc.) to an SQS queue (~~Q1~~ Preference).
 
 ### Integrate the Lex chatbot into the chat API
 - Use the AWS SDK to call the Lex chatbot from the API Lambda (LF0).
@@ -81,11 +81,11 @@ Update: Since keep the Elasticsearch instance running costs a lot, I switched to
 
 ### Build a suggestions module (decoupled from the Lex chatbot)
 - Create a new Lambda function (LF2) that acts as a queue worker. Whenever it is invoked it:
-    1. ~~Pulls a message from the SQS queue (Q1).~~ SQS trigger will handle the new message pulling automatically and pass the message info into Lambfa function variable `event`.
+    1. ~~Pulls a message from the SQS queue (Q1).~~ SQS trigger will handle the new message pulling automatically and pass the message info into Lambda function variable `event`.
     2. Gets a random restaurant recommendation for the cuisine type and locaiton/region the user prefered from ~~Elasticsearch~~ RDS and DynamoDB.
     3. Sends it over text message to the phone number included in the SQS message, using SNS.
 - ~~Set up a CloudWatch event trigger that runs every minute and invokes the Lambda function (LF2).~~
-- AWS recetly support triggering the Lambda function with SQS. Therefore, I implemented a more elegant way to trigger the LF2 when new message arrived in Preference. When setting up the trigger, remeber to include `AWSLambdaSQSQueueExecutionRole` and `AWSLambdaExecute` in the Lambda function execution role (create a new role in IAM that attaches these two policies).
+- AWS recetly support triggering the Lambda function with SQS. Therefore, I implemented a more elegant way to trigger the LF2 when new message arrived in the queue Preference. When setting up the trigger, remeber to include `AWSLambdaSQSQueueExecutionRole` and `AWSLambdaExecute` in the Lambda function execution role (create a new role in IAM that attaches these two policies).
 
 
 ## Directory Tree and Contents
