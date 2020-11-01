@@ -125,7 +125,7 @@ Update: Since keep the Elasticsearch instance running costs a lot, I switched to
 │   .
 │   ├── jose
 │   └── lambda_function.py
-└── LambdaFunction2_sqs_trigger : LF2 that searching restaurants using RDS and triggered by SQS
+└── LambdaFunction2_sqs_trigger : LF2 that searches restaurants using RDS and triggered by SQS
     ├── pymysql
     ├── PyMySQL-0.10.1.dist-info
     └──lambda_function.py
