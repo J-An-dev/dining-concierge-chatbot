@@ -9,9 +9,13 @@ A workflow demo video for this project: https://www.youtube.com/watch?v=nADHtbxY
 
 Every time the user accesses the chatbot web application, she would be asked to log in first and led to the sign-in/sign-up UI page hosted by AWS Cognito. After successfully logged-in or registered (and underneather token validation), then could she start the interction with the chatbot. Based on the conversation with the user, Lex chatbot will identify the user's preference (including cuisine type, location, date, time, phone number) and store it as an SQS queue message. Then, the Lambda fcuntion searches through ~~Elasticsearch~~ RDS to get random suggestions of restaurantIDs with the given cuisine type and location. Meanwhile, the Lambda function would also fetch the restaurants' detailed info from the DynamoDB table (e.g., restaurant name, address, rating and price) for the given restaurantIDs. Finally, a restaurant-suggestion message will be sent back to the user's mobile via SMS.
 
+|![Application Architecture and Workflow](./Dining_Concierge_Chatbot_Workflow_new.png)|
+|:--:|
+|Application Architecture and Workflow (NEW)|
+
 |![Application Architecture and Workflow](./Dining_Concierge_Chatbot_Workflow.png)|
 |:--:|
-|Application Architecture and Workflow|
+|Application Architecture and Workflow (OLD)|
 
 ## Implementation Details
 ### Build and deploy the front-end interface
