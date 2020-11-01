@@ -56,7 +56,7 @@ def dispatch(event):
 
         sqs = boto3.resource('sqs', aws_access_key_id='aws_access_key_id',
                              aws_secret_access_key='aws_secret_access_key', region_name='region_name')
-        queue = sqs.get_queue_by_name(QueueName='Q1')
+        queue = sqs.get_queue_by_name(QueueName='Preference')
         message = json.dumps(slot)
 
         response = queue.send_message(MessageBody=message)
