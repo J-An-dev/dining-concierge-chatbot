@@ -2,10 +2,12 @@
 
 Customer Service is a core service for a lot of businesses around the world and it is getting greatly enhanced by Natural Language Processing-powered applications nowadays. This project implements a serverless, microservice-driven web application, specifically, a Dining Concierge Chatbot that sends the user some restaurant suggestions given a set of preference that the user provided through conversation with the chatbot.
 
+Chatbot endpoint: https://chatbot-2020.s3.amazonaws.com/chat.html
+
 ## Workflow
 A workflow demo video for this project: https://www.youtube.com/watch?v=nADHtbxYYXw
 
-Every time the user accesses the chatbot web application, she would be asked to log in first and led to the sign-in/sign-up UI page hosted by AWS Cognito. After successfully logged-in or registered (and underneather token validation), then could she start the interction with the chatbot. Based on the conversation with the user, Lex chatbot will identify the user's preference (including cuisine type, location, date, time, phone number) and store it as an SQS queue message. Then, the Lambda fcuntion searches through Elasticsearch to get random suggestions of restaurantIDs with the given cuisine type and location. Meanwhile, the Lambda function would also fetch the restaurants' detailed info from the DynamoDB table (e.g., restaurant name, address, rating and price) for the given restaurantIDs. Finally, a restaurant-suggestion message will be sent back to the user's mobile via SMS.
+Every time the user accesses the chatbot web application, she would be asked to log in first and led to the sign-in/sign-up UI page hosted by AWS Cognito. After successfully logged-in or registered (and underneather token validation), then could she start the interction with the chatbot. Based on the conversation with the user, Lex chatbot will identify the user's preference (including cuisine type, location, date, time, phone number) and store it as an SQS queue message. Then, the Lambda fcuntion searches through ~~Elasticsearch~~ RDS to get random suggestions of restaurantIDs with the given cuisine type and location. Meanwhile, the Lambda function would also fetch the restaurants' detailed info from the DynamoDB table (e.g., restaurant name, address, rating and price) for the given restaurantIDs. Finally, a restaurant-suggestion message will be sent back to the user's mobile via SMS.
 
 |![Application Architecture and Workflow](./Dining_Concierge_Chatbot_Workflow.png)|
 |:--:|
@@ -56,21 +58,30 @@ Every time the user accesses the chatbot web application, she would be asked to 
     1. Search restaurants on Manhatta, New York given a specific cuisine type.
     2. Clean up any duplicate restaurant. 
 - Store restaurant info in a DynamoDB table:
-    1. Create a DynamoDB table and named "yelp-restaurants".
+    1. Create a DynamoDB table and named `yelp-restaurants`.
     2. Store the restaurants scraped in the DynamoDB table.
     3. Store necessary attributes: Business ID, Name, Address, Location, Number of Reviews, Rating, Zip Code
 
-### Create an Elasticsearch instance
-1. Create an Elasticsearch index called "restaurants".
-2. Create an Elasticsearch type under the index "restaurants" called "Restaurant".
-3. Store partial information (RestaurantID, Cuisine, Location/Region) for each restaurant scraped under the "restaurants" index.
+### ~~Create an Elasticsearch instance~~
+1. ~~Create an Elasticsearch index called "restaurants".~~
+2. ~~Create an Elasticsearch type under the index "restaurants" called "Restaurant".~~
+3. ~~Store partial information (RestaurantID, Cuisine, Location/Region) for each restaurant scraped under the "restaurants" index.~~
+
+Update: Since keep the Elasticsearch instance running costs a lot, I switched to use RDS to handle the restaurant searching.
+
+### Create a RDS table
+1. Create a RDS MySQL database called `yelp-restaurants`.
+2. Set Public accessibility to Yes (but remember the user name and password).
+3. Add MYSQL/Aurora type inbound from anywhere (0.0.0.0/0) rule in the default VPC security groups.
+4. Create a table named `restaurant_info_clean` and import the restaurant info into the table with attributes `restaurant_id`, `cuisine_type`, `manhattan_region`.
 
 ### Build a suggestions module (decoupled from the Lex chatbot)
 - Create a new Lambda function (LF2) that acts as a queue worker. Whenever it is invoked it:
     1. Pulls a message from the SQS queue (Q1).
     2. Gets a random restaurant recommendation for the cuisine type and locaiton/region the user prefered from Elasticsearch and DynamoDB.
     3. Sends it over text message to the phone number included in the SQS message, using SNS.
-- Set up a CloudWatch event trigger that runs every minute and invokes the Lambda function (LF2).
+- ~~Set up a CloudWatch event trigger that runs every minute and invokes the Lambda function (LF2).~~
+- AWS recetly support triggering the Lambda function with SQS. Therefore, I implemented a more elegant way to trigger the LF2 when new message arrived in Q1. When setting up the trigger, remeber to include `AWSLambdaSQSQueueExecutionRole` and `AWSLambdaExecute` in the Lambda function execution role (create a new role in IAM that attaches these two policies).
 
 
 ## Directory Tree and Contents
@@ -104,10 +115,14 @@ Every time the user accesses the chatbot web application, she would be asked to 
 │   ├── requests
 │   ├── elasticsearch
 │   └──lambda_function.py
-└── LambdaFunction-auth4chatbot : Lambda function that validates JWT id_token returned from Cognito for authentication
-    ├── bin
-    .
-    .
-    ├── jose
-    └── lambda_function.py
+├── LambdaFunction-auth4chatbot : Lambda function that validates JWT id_token returned from Cognito for authentication
+│   ├── bin
+│   .
+│   .
+│   ├── jose
+│   └── lambda_function.py
+└── LambdaFunction2_sqs_trigger : LF2 that searching restaurants using RDS and triggered by SQS
+    ├── pymysql
+    ├── PyMySQL-0.10.1.dist-info
+    └──lambda_function.py
 ```
