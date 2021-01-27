@@ -2,7 +2,7 @@
 
 Customer Service is a core service for a lot of businesses around the world and it is getting greatly enhanced by Natural Language Processing-powered applications nowadays. This project implements a serverless, microservice-driven web application, specifically, a Dining Concierge Chatbot that sends the user some restaurant suggestions given a set of preference that the user provided through conversation with the chatbot.
 
-Chatbot endpoint: https://chatbot-2020.s3.amazonaws.com/chat.html
+<!-- Chatbot endpoint: https://chatbot-2020.s3.amazonaws.com/chat.html -->
 
 ## Workflow
 A workflow demo video for this project: https://www.youtube.com/watch?v=nADHtbxYYXw
